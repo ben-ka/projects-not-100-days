@@ -1,8 +1,9 @@
 import pygame
 import os
+
 pygame.init()
 pygame.font.init()
-
+pygame.mixer.init()
 
 WIDTH,HEIGHT=2000,1050
 WIND = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -31,7 +32,8 @@ red_spaceshipImg = pygame.image.load(os.path.join("Assets","spaceship_red.png"))
 red_Spaceship = pygame.transform.scale(red_spaceshipImg, (SPACESHIP_WIDTH,SPACESHIP_HEIGHT))
 red_Spaceship = pygame.transform.rotate(red_Spaceship,270)
 
-
+BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets","bullet.mp3"))
+BULLET_SHOOT_SOUND = pygame.mixer.Sound(os.path.join("Assets","bullet2.mp3"))
 
 def draw_window(yellow,red, yellow_bullets,red_bullets,yellow_health,red_health,winner_text):
     WIND.blit(space,(0,0))
@@ -123,8 +125,8 @@ def handle_offscreen(yellow,red):
 
 
 def main():
-    yellow = pygame.Rect(400,300,SPACESHIP_WIDTH,SPACESHIP_HEIGHT)
-    red = pygame.Rect(1600,300,SPACESHIP_WIDTH,SPACESHIP_HEIGHT)
+    yellow = pygame.Rect(400,100,SPACESHIP_WIDTH,SPACESHIP_HEIGHT)
+    red = pygame.Rect(1600,500,SPACESHIP_WIDTH,SPACESHIP_HEIGHT)
     red_bullets =[]
     yellow_bullets =[]
     red_health =10
@@ -143,15 +145,18 @@ def main():
                         yellow_bullet = pygame.Rect(yellow.x+yellow.width,yellow.y + yellow.height//2 -2 ,30,15)
                         if winner_text =="":
                                 yellow_bullets.append(yellow_bullet)
-                        
+                                BULLET_SHOOT_SOUND.play()
                   if event.key == pygame.K_BACKSLASH and len(red_bullets) < MAX_BULLETS :
                         red_bullet= pygame.Rect(red.x ,red.y + red.height//2 -2,30,15)
                         if winner_text =="":
                                 red_bullets.append(red_bullet)
+                                BULLET_SHOOT_SOUND.play()
             if event.type == YELLOW_HIT:
-                 yellow_health-=1      # red hit yellow
+                 yellow_health-=1   # red hit yellow
+                 BULLET_HIT_SOUND.play()
             if event.type == RED_HIT:
-                red_health-=1       # yellow hit red
+                red_health-=1   # yellow hit red
+                BULLET_HIT_SOUND.play()    
        
         if red_health<=0:
              winner_text = "YELLOW WINS!"
